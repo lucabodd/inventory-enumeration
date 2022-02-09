@@ -34,10 +34,7 @@ type Host struct {
 func main() {
 	//Ansible setup env
 	os.Setenv("ANSIBLE_STDOUT_CALLBACK", "json")
-	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
-	usr, err := user.Current()
-    check(err)
-    home := usr.HomeDir
+	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")\
 
 	//vars
 	var assets = make(map[string]*Host)
@@ -49,8 +46,6 @@ func main() {
 	var longitude string
 	var sensor string
 	var sensor_port string
-	var sensor_ssh_username string
-	var sensor_ssh_password string
 	var no_copy_id bool
 	var help bool
 
@@ -74,7 +69,6 @@ func main() {
 	}
 
 	ssh_username, ssh_password = credentials("Username for "+subnet+" ↴", "Password ↴")
-	sensor_ssh_username, sensor_ssh_password = credentials("Username for sensor "+sensor+" ↴", "Password ↴")
 
 	gopath := os.Getenv("GOPATH")
     if gopath == "" {

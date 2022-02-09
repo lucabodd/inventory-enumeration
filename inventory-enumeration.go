@@ -40,7 +40,6 @@ func main() {
 	var ssh_username string
 	var ssh_password string
 	var site string
-	var longitude string
 	var sensor string
 	var sensor_port string
 	var no_copy_id bool

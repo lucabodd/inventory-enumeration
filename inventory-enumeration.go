@@ -278,7 +278,7 @@ func sshRunUname(ip string, port string, ssh_username string, ssh_password strin
     if gopath == "" {
         gopath = build.Default.GOPATH
     }
-	datadir := gopath+"/src/github.com/lucabodd/Alienvault-hids-autodeploy"
+	datadir := gopath+"/src/github.com/lucabodd/inventory-enumeration"
 	check(err)
 	scanner, err := nmap.NewScanner(
 		nmap.WithTargets(ip),

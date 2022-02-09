@@ -12,7 +12,7 @@ go version
 echo "Environment settings"
 go env
 echo "Installing scanner ..."
-go get github.com/lucabodd/Alienvault-hids-autodeploy
-go install github.com/lucabodd/Alienvault-hids-autodeploy
+go get github.com/lucabodd/inventory-enumeration
+go install github.com/lucabodd/inventory-enumeration
 echo "Done!"
 echo "please 'source ~/.bashrc' "

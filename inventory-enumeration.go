@@ -34,7 +34,7 @@ type Host struct {
 func main() {
 	//Ansible setup env
 	os.Setenv("ANSIBLE_STDOUT_CALLBACK", "json")
-	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")\
+	os.Setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
 
 	//vars
 	var assets = make(map[string]*Host)

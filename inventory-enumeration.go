@@ -74,7 +74,6 @@ func main() {
     if gopath == "" {
         gopath = build.Default.GOPATH
     }
-	datadir := gopath+"/src/github.com/lucabodd/inventory-enumeration"
 
 	// setup nmap scanner in order to discover active hosts
 	log.Println("[*] Setting Up nmap NSE engine")

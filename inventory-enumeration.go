@@ -12,7 +12,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Ullaakut/nmap"
-	ansibler "github.com/apenella/go-ansible"
 	"github.com/tidwall/gjson"
 	"go/build"
 	"golang.org/x/crypto/ssh"

@@ -42,7 +42,7 @@ func main() {
 	var ports string
 	var ssh_username string
 	var ssh_password string
-	var latitude string
+	var site string
 	var longitude string
 	var sensor string
 	var sensor_port string
@@ -50,8 +50,7 @@ func main() {
 	var help bool
 
 	flag.BoolVar(&help, "help", false, "prints this help message")
-	flag.StringVar(&latitude, "site-lat", "", "Override geolocation latitude discovery for a site")
-	flag.StringVar(&longitude, "site-long", "", "Override geolocation longitude discovery for a site")
+	flag.StringVar(&site, "site", "", "Site name")
 	flag.BoolVar(&no_copy_id, "no-copy-id", false, "Copy ssh public key to scanned assets. Set this flag if you store RSA public keys not in ~/.ssh/authorized_keys. If this flag is set to false password will be written CLEARTEXT in ansible inventory file")
 	flag.StringVar(&sensor, "sensor-ip", "", "Sensor IP ossec-hids agents should connect to")
 	flag.StringVar(&sensor_port, "sensor-port", "22", "Sensor SSH port")
@@ -59,7 +58,7 @@ func main() {
 	flag.StringVar(&subnet, "subnet-cidr", "", "Specify subnet/host CIDR where to install ossec-hids agent")
 
 	flag.Parse()
-	if subnet == "" || sensor == "" || help {
+	if subnet == "" || help {
 		fmt.Println("[-] ERROR: Not enough arguments")
 		fmt.Println("Usage: Alienvault-hids-deploy [OPTIONS]")
 		fmt.Println("One ore more required flag has not been prodided.")
@@ -135,7 +134,7 @@ func main() {
 		}
 	}
 	// generate .csv that needs to be imported in alienvault
-	alienvaultAssets(assets, latitude, longitude)
+	alienvaultAssets(assets, site)
 	// deleting hosts wiyh defined PTR & closed ssh
 	for ip, host := range assets {
 		if host.Port == "" {
@@ -373,8 +372,8 @@ func sshCopyId(ip string, port string, ssh_username string, ssh_password string,
 }
 
 //Generate Assets.csv for alienvault
-func alienvaultAssets(assets map[string]*Host, user_latitude string, user_longitude string) {
-	var latitude string
+func alienvaultAssets(assets map[string]*Host, user_site string, user_longitude string) {
+	var site string
 	var longitude string
 	log.Println("[*] geolocation not defined in command line, retriveing site geogrphic cordinates...")
 	url := "https://freegeoip.app/json/"
@@ -385,13 +384,13 @@ func alienvaultAssets(assets map[string]*Host, user_latitude string, user_longit
 	defer res.Body.Close()
 	geoloc, _ := ioutil.ReadAll(res.Body)
 
-	if user_latitude != "" {
-		latitude = user_latitude
+	if user_site != "" {
+		site = user_site
 	} else {
-		log.Println("[*] Detecting site latitude...")
-		value := gjson.Get(string(geoloc), "latitude")
-		latitude = value.String()
-		log.Println("[+] LAT: " + latitude)
+		log.Println("[*] Detecting site site...")
+		value := gjson.Get(string(geoloc), "site")
+		site = value.String()
+		log.Println("[+] LAT: " + site)
 	}
 	if user_longitude != "" {
 		longitude = user_longitude
@@ -407,11 +406,11 @@ func alienvaultAssets(assets map[string]*Host, user_latitude string, user_longit
 	f, err := os.Create("Assets.csv")
 	check(err)
 	defer f.Close()
-	bc, err := f.WriteString("\"IPs\";\"Hostname\";\"FQDNs\";\"Description\";\"Asset Value\";\"Operating System\";\"Latitude\";\"Longitude\";\"Host ID\";\"External Asset\";\"Device Type\"")
+	bc, err := f.WriteString("\"IPs\";\"Hostname\";\"FQDNs\";\"Description\";\"Asset Value\";\"Operating System\";\"site\";\"Host ID\";\"External Asset\";\"Device Type\"")
 	bt += bc
 	check(err)
 	for ip, host := range assets {
-		bc, err := f.WriteString("\n\"" + ip + "\";\"" + host.Hostname + "\";\"\";\"\";\"2\";\"\";\"" + latitude + "\";\"" + longitude + "\";\"\";\"\";\"\"")
+		bc, err := f.WriteString("\n\"" + ip + "\";\"" + host.Hostname + "\";\"\";\"\";\"2\";\"\";\"" + site + "\";\"\";\"\";\"\"")
 		bt += bc
 		check(err)
 	}

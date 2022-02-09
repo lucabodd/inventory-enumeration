@@ -372,45 +372,18 @@ func sshCopyId(ip string, port string, ssh_username string, ssh_password string,
 }
 
 //Generate Assets.csv for alienvault
-func alienvaultAssets(assets map[string]*Host, user_site string, user_longitude string) {
-	var site string
-	var longitude string
-	log.Println("[*] geolocation not defined in command line, retriveing site geogrphic cordinates...")
-	url := "https://freegeoip.app/json/"
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("accept", "application/json")
-	req.Header.Add("content-type", "application/json")
-	res, _ := http.DefaultClient.Do(req)
-	defer res.Body.Close()
-	geoloc, _ := ioutil.ReadAll(res.Body)
-
-	if user_site != "" {
-		site = user_site
-	} else {
-		log.Println("[*] Detecting site site...")
-		value := gjson.Get(string(geoloc), "site")
-		site = value.String()
-		log.Println("[+] LAT: " + site)
-	}
-	if user_longitude != "" {
-		longitude = user_longitude
-	} else {
-		log.Println("[*] Detecting site longitude...")
-		value := gjson.Get(string(geoloc), "longitude")
-		longitude = value.String()
-		log.Println("[+] LNG: " + longitude)
-	}
+func alienvaultAssets(assets map[string]*Host, site string) {
 
 	log.Println("[*] Generating Alienvault Assets.csv")
 	bt := 0
 	f, err := os.Create("Assets.csv")
 	check(err)
 	defer f.Close()
-	bc, err := f.WriteString("\"IPs\";\"Hostname\";\"FQDNs\";\"Description\";\"Asset Value\";\"Operating System\";\"site\";\"Host ID\";\"External Asset\";\"Device Type\"")
+	bc, err := f.WriteString("\"IPs\";\"Hostname\";\"Operating System\";\"site\";\"Host ID\";\"External Asset\";\"Device Type\"")
 	bt += bc
 	check(err)
 	for ip, host := range assets {
-		bc, err := f.WriteString("\n\"" + ip + "\";\"" + host.Hostname + "\";\"\";\"\";\"2\";\"\";\"" + site + "\";\"\";\"\";\"\"")
+		bc, err := f.WriteString("\n\"" + ip + "\";\"" + host.Hostname + "\";\"\";\"" + site + "\";\"\";\"\";\"\"")
 		bt += bc
 		check(err)
 	}
